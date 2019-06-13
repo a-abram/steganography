@@ -3,22 +3,28 @@ from math import ceil
 from random import randint
 
 
-inp = list(map(ord, [i for i in input("Text: ")]))
+inp = list(map(ord, [i for i in input("Text: ")]))  # Чтение текста из сконсоли
+image = Image.open(input("Image: "))  # Считывание картинки
+inp.append(0)  # чтобы было понятно, когда заканчивается текст. Аналог \0
 
-for _ in range(3-len(inp) % 3):
-    inp.append(255)
+width = image.size[0]  # Определяем ширину
+height = image.size[1]  # Определяем высоту
 
-size = ceil((len(inp)//3 + 1) ** (1/2))
+# Записываем в самый первый пиксель координаты следующего
+x = randint(1, width)
+y = randint(1, height)
+image.putpixel((0, 0), (x, y, inp[0]))
+inp.remove(inp[0])
 
-img = Image.new('RGB',
-                (size, size),
-                (randint(0, 256), randint(0, 256), randint(0, 256)
-                 ))
-t = 0
-for y in range(size):
-    for x in range(size):
-        color = tuple(inp[t*3:(t+1)*3])
-        if color:
-            img.putpixel((x, y), color)
-        t += 1
-img.save("tmp.bmp", "BMP")
+busy = []
+for num in inp:
+    xOld, yOld = x, y
+    x = randint(1, width-1)  # Генерируем случайные координаты
+    y = randint(1, height-1)
+    while (x, y) in busy:  # Если эти координаты заняты, создаем новые
+        x = randint(1, width-1)
+        y = randint(1, height-1)
+    image.putpixel((xOld, yOld), (x, y, num))  # Записываем в картинку
+    busy.append((x, y))  # Запоминаем, что мы в них что-то записали
+
+image.save("tmp.bmp", "BMP")

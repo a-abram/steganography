@@ -1,9 +1,14 @@
 from PIL import Image
 
-img = Image.open('tmp.bmp')
+img = Image.open(input("Image: "))  # Считывание картинки
 
-for y in range(img.size[1]):
-    for x in range(img.size[0]):
-        p = img.getpixel((x, y))
-        for j in p:
-            print(chr(j), end='')
+# Получаем координаты из первого пикселя и выводим букву, которая в нем хранится
+x = img.getpixel((0, 0))[0]
+y = img.getpixel((0, 0))[1]
+print(chr(img.getpixel((0, 0))[2]), end='')
+
+while img.getpixel((x, y))[2] != 0:
+    print(chr(img.getpixel((x, y))[2]), end='')
+    xOld, yOld = x, y
+    x = img.getpixel((xOld, yOld))[0]
+    y = img.getpixel((xOld, yOld))[1]
